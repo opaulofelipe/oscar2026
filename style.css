@@ -57,10 +57,12 @@ body {
 .intro-logo {
   width: 256px;
   height: 256px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 28px;
   box-shadow: 0 0 30px rgba(212, 175, 55, 0.12);
   animation: pulseFade 2.2s ease-in-out infinite;
+  display: block;
+  margin: 0 auto;
 }
 
 @keyframes pulseFade {
@@ -499,10 +501,6 @@ input[type="text"]:focus {
   .main-grid {
     grid-template-columns: 1fr;
   }
-
-  .side-column {
-    order: -1;
-  }
 }
 
 @media (max-width: 640px) {
@@ -548,5 +546,6 @@ input[type="text"]:focus {
   .intro-logo {
     width: min(70vw, 256px);
     height: min(70vw, 256px);
+    object-fit: contain;
   }
 }
