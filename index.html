@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bolão do Oscar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="intro-screen" class="intro-screen">
+    <div class="intro-content">
+      <img src="oscarlogo.png" alt="Estatueta do Oscar" class="intro-logo" />
+      <h1 class="intro-title">Bolão do Oscar</h1>
+      <p class="intro-subtitle">Preparando os indicados...</p>
+      <div class="intro-loader">
+        <div class="intro-loader-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-shell hidden" id="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>Bolão do Oscar</h1>
+        <p class="topbar-subtitle">Faça seus palpites e acompanhe o ranking</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="open-winners-btn" class="btn btn-gold">Preencher os reais vencedores</button>
+        <button id="open-ranking-btn" class="btn btn-outline">Ver ranking</button>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <section class="card card-form">
+        <div class="card-header">
+          <h2>Seu palpite</h2>
+          <p>Preencha seu nome e escolha um indicado por categoria.</p>
+        </div>
+
+        <form id="prediction-form">
+          <div class="field">
+            <label for="participant-name">Seu nome</label>
+            <input
+              type="text"
+              id="participant-name"
+              name="participant-name"
+              maxlength="80"
+              placeholder="Digite seu nome"
+              required
+            />
+          </div>
+
+          <div id="categories-container" class="categories-container">
+            <div class="loading-box">Carregando categorias da planilha...</div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold btn-large">Salvar palpite</button>
+            <button type="button" id="clear-form-btn" class="btn btn-outline">Limpar seleção</button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="side-column">
+        <section class="card">
+          <div class="card-header">
+            <h2>Dados</h2>
+            <p>Importe ou exporte os palpites em JSON.</p>
+          </div>
+
+          <div class="stack-actions">
+            <button id="export-json-btn" class="btn btn-gold">Exportar JSON</button>
+            <label class="btn btn-outline file-label">
+              Importar JSON
+              <input type="file" id="import-json-input" accept=".json,application/json" hidden />
+            </label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Resumo</h2>
+          </div>
+          <div class="summary-list" id="summary-list">
+            <div class="summary-item">
+              <span>Categorias</span>
+              <strong id="summary-categories">0</strong>
+            </div>
+            <div class="summary-item">
+              <span>Participantes</span>
+              <strong id="summary-participants">0</strong>
+            </div>
+            <div class="summary-item">
+              <span>Vencedores preenchidos</span>
+              <strong id="summary-winners">0</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Gerenciamento</h2>
+            <p>Use com cuidado.</p>
+          </div>
+          <div class="stack-actions">
+            <button id="reset-winners-btn" class="btn btn-outline danger-outline">Resetar reais vencedores</button>
+            <button id="delete-all-predictions-btn" class="btn btn-outline danger-outline">Apagar todos os palpites</button>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div id="ranking-modal" class="modal hidden">
+    <div class="modal-backdrop" data-close-modal="ranking-modal"></div>
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <h2>Ranking</h2>
+          <p>Pontuação calculada com base nos reais vencedores.</p>
+        </div>
+        <button class="icon-btn" data-close-modal="ranking-modal">✕</button>
+      </div>
+      <div id="ranking-content" class="modal-content"></div>
+    </div>
+  </div>
+
+  <div id="winners-modal" class="modal hidden">
+    <div class="modal-backdrop" data-close-modal="winners-modal"></div>
+    <div class="modal-panel large">
+      <div class="modal-header">
+        <div>
+          <h2>Preencher os reais vencedores</h2>
+          <p>Escolha os vencedores oficiais para calcular o ranking.</p>
+        </div>
+        <button class="icon-btn" data-close-modal="winners-modal">✕</button>
+      </div>
+
+      <form id="winners-form" class="modal-content">
+        <div id="winners-container" class="categories-container"></div>
+        <div class="form-actions sticky-actions">
+          <button type="submit" class="btn btn-gold btn-large">Salvar reais vencedores</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
