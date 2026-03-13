@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
   startIntro();
-
   loadLocalState();
+  bindEvents();
 
   try {
     await loadExcelFromRoot();
@@ -45,7 +45,6 @@ async function init() {
     renderWinnersCategories();
     renderRanking();
     updateSummary();
-    bindEvents();
   } catch (error) {
     console.error(error);
     el.categoriesContainer.innerHTML = `
@@ -59,8 +58,8 @@ async function init() {
         As categorias dos vencedores só aparecem quando a planilha é carregada.
       </div>
     `;
-    bindEvents();
     showToast(`Erro ao carregar ${EXCEL_FILE}.`);
+    updateSummary();
   }
 }
 
@@ -177,7 +176,7 @@ function renderPredictionCategories() {
   el.categoriesContainer.innerHTML = state.categories
     .map((category) => {
       const optionsHtml = category.options
-        .map((option, index) => `
+        .map((option) => `
           <label class="option-label">
             <input type="radio" name="category-${escapeHtml(category.id)}" value="${escapeHtml(option)}">
             <span class="option-text">${escapeHtml(option)}</span>
@@ -293,6 +292,7 @@ function handleSaveRealWinners(event) {
   saveLocalState();
   updateSummary();
   renderRanking();
+  renderWinnersCategories();
   closeModal(el.winnersModal);
   showToast("Reais vencedores salvos.");
 }
