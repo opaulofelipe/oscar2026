@@ -17,11 +17,13 @@ const el = {
   winnersContainer: document.getElementById("winners-container"),
   winnersForm: document.getElementById("winners-form"),
   rankingContent: document.getElementById("ranking-content"),
+  participantsContent: document.getElementById("participants-content"),
   summaryCategories: document.getElementById("summary-categories"),
   summaryParticipants: document.getElementById("summary-participants"),
   summaryWinners: document.getElementById("summary-winners"),
   openWinnersBtn: document.getElementById("open-winners-btn"),
   openRankingBtn: document.getElementById("open-ranking-btn"),
+  openParticipantsBtn: document.getElementById("open-participants-btn"),
   clearFormBtn: document.getElementById("clear-form-btn"),
   resetWinnersBtn: document.getElementById("reset-winners-btn"),
   deleteAllPredictionsBtn: document.getElementById("delete-all-predictions-btn"),
@@ -29,6 +31,7 @@ const el = {
   importJsonInput: document.getElementById("import-json-input"),
   toast: document.getElementById("toast"),
   rankingModal: document.getElementById("ranking-modal"),
+  participantsModal: document.getElementById("participants-modal"),
   winnersModal: document.getElementById("winners-modal")
 };
 
@@ -44,6 +47,7 @@ async function init() {
     renderPredictionCategories();
     renderWinnersCategories();
     renderRanking();
+    renderParticipants();
     updateSummary();
   } catch (error) {
     console.error(error);
@@ -56,6 +60,11 @@ async function init() {
     el.winnersContainer.innerHTML = `
       <div class="empty-state">
         As categorias dos vencedores só aparecem quando a planilha é carregada.
+      </div>
+    `;
+    el.participantsContent.innerHTML = `
+      <div class="empty-state">
+        A lista de participantes aparece quando houver dados salvos.
       </div>
     `;
     showToast(`Erro ao carregar ${EXCEL_FILE}.`);
@@ -73,11 +82,19 @@ function startIntro() {
 function bindEvents() {
   el.predictionForm.addEventListener("submit", handleSavePrediction);
   el.winnersForm.addEventListener("submit", handleSaveRealWinners);
+
   el.openWinnersBtn.addEventListener("click", () => openModal(el.winnersModal));
+
   el.openRankingBtn.addEventListener("click", () => {
     renderRanking();
     openModal(el.rankingModal);
   });
+
+  el.openParticipantsBtn.addEventListener("click", () => {
+    renderParticipants();
+    openModal(el.participantsModal);
+  });
+
   el.clearFormBtn.addEventListener("click", clearPredictionForm);
   el.resetWinnersBtn.addEventListener("click", resetRealWinners);
   el.deleteAllPredictionsBtn.addEventListener("click", deleteAllPredictions);
@@ -273,6 +290,7 @@ function handleSavePrediction(event) {
   saveLocalState();
   updateSummary();
   renderRanking();
+  renderParticipants();
   clearPredictionForm();
 }
 
@@ -343,6 +361,46 @@ function renderRanking() {
   `;
 }
 
+function renderParticipants() {
+  if (!state.predictions.length) {
+    el.participantsContent.innerHTML = `<div class="empty-state">Ainda não há participantes salvos.</div>`;
+    return;
+  }
+
+  const participants = [...state.predictions]
+    .map((prediction) => ({
+      name: prediction.name,
+      markedCount: countMarkedCategories(prediction)
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+
+  el.participantsContent.innerHTML = `
+    <div class="participants-list">
+      ${participants.map((item, index) => `
+        <div class="participant-item">
+          <div class="participant-left">
+            <div class="participant-position">${index + 1}</div>
+            <div class="participant-name">${escapeHtml(item.name)}</div>
+          </div>
+          <div class="participant-count">${item.markedCount} categoria(s)</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function countMarkedCategories(prediction) {
+  let count = 0;
+
+  for (const category of state.categories) {
+    if (prediction.picks && prediction.picks[category.id]) {
+      count += 1;
+    }
+  }
+
+  return count;
+}
+
 function updateSummary() {
   el.summaryCategories.textContent = state.categories.length;
   el.summaryParticipants.textContent = state.predictions.length;
@@ -372,6 +430,7 @@ function deleteAllPredictions() {
   state.predictions = [];
   saveLocalState();
   renderRanking();
+  renderParticipants();
   updateSummary();
   showToast("Todos os palpites foram apagados.");
 }
@@ -415,6 +474,7 @@ function importJsonBackup(event) {
       saveLocalState();
       renderWinnersCategories();
       renderRanking();
+      renderParticipants();
       updateSummary();
       showToast("JSON importado com sucesso.");
     } catch (error) {
