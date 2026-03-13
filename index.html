@@ -89,10 +89,12 @@
               <span>Categorias</span>
               <strong id="summary-categories">0</strong>
             </div>
-            <div class="summary-item">
+
+            <button type="button" class="summary-item summary-item-button" id="open-participants-btn">
               <span>Participantes</span>
               <strong id="summary-participants">0</strong>
-            </div>
+            </button>
+
             <div class="summary-item">
               <span>Vencedores preenchidos</span>
               <strong id="summary-winners">0</strong>
@@ -125,6 +127,20 @@
         <button class="icon-btn" data-close-modal="ranking-modal">✕</button>
       </div>
       <div id="ranking-content" class="modal-content"></div>
+    </div>
+  </div>
+
+  <div id="participants-modal" class="modal hidden">
+    <div class="modal-backdrop" data-close-modal="participants-modal"></div>
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <h2>Participantes</h2>
+          <p>Veja quem já preencheu e quantas categorias marcou.</p>
+        </div>
+        <button class="icon-btn" data-close-modal="participants-modal">✕</button>
+      </div>
+      <div id="participants-content" class="modal-content"></div>
     </div>
   </div>
 
